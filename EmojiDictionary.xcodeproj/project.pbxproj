@@ -11,7 +11,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		9FADD4E22DCA2DB40008F7E9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		907674272DE906F300B6FB60 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -21,7 +21,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		9FADD4D22DCA2DB00008F7E9 /* EmojiDictionary */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (9FADD4E22DCA2DB40008F7E9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = EmojiDictionary; sourceTree = "<group>"; };
+		9076741B2DE906F300B6FB60 /* EmojiDictionary */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (907674272DE906F300B6FB60 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = EmojiDictionary; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,7 +38,7 @@
 		9FADD4C72DCA2DB00008F7E9 = {
 			isa = PBXGroup;
 			children = (
-				9FADD4D22DCA2DB00008F7E9 /* EmojiDictionary */,
+				9076741B2DE906F300B6FB60 /* EmojiDictionary */,
 				9FADD4D12DCA2DB00008F7E9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -67,7 +67,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				9FADD4D22DCA2DB00008F7E9 /* EmojiDictionary */,
+				9076741B2DE906F300B6FB60 /* EmojiDictionary */,
 			);
 			name = EmojiDictionary;
 			packageProductDependencies = (
