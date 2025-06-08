@@ -9,6 +9,9 @@ class EmojiTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = editButtonItem
+        tableView.register(EmojiCustomCellView.self, forCellReuseIdentifier: "cell")
+//        let insets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+//        tableView.contentInset = insets
     }
 
     // MARK: - Table view data source
@@ -25,7 +28,7 @@ class EmojiTableViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "EmojiCell", for: indexPath) as! EmojiTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! EmojiCustomCellView
         let emoji = emojiGroups[indexPath.section].emojis[indexPath.row]
 //        var content = cell.defaultContentConfiguration()
 //        content.text = "\(emoji.symbol) - \(emoji.name)"
@@ -41,11 +44,17 @@ class EmojiTableViewController: UITableViewController {
         emojis.insert(movedEmoji, at: destinationIndexPath.row)
     }
     
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        .delete
+    //Шаг 1. Разрешение редактировать строку, можно поставить запрет н а редактирование определенной строки. Если нужно редактировать все строки метод можно опустить.
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
     }
     
-    //Удаление строки таблицы
+    //Шаг 2. Выбор способа редактирования
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .delete
+    }
+    
+    //Шаг3. Удаление строки таблицы
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             self.emojis.remove(at: indexPath.row)
