@@ -9,11 +9,24 @@ class EmojiTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = editButtonItem
-        tableView.register(EmojiCustomCellView.self, forCellReuseIdentifier: "cell")
+//        tableView.register(EmojiCustomCellView.self, forCellReuseIdentifier: "cell")
 //        let insets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
 //        tableView.contentInset = insets
     }
 
+    
+    @IBSegueAction func addEditEmoji(_ coder: NSCoder, sender: Any?) -> UITableViewController? {
+        if let cell = sender as? UITableViewCell,
+           let indexPath = tableView.indexPath(for: cell) {
+            print("touch cell")
+            let selectedEmoji = emojiGroups[indexPath.section].emojis[indexPath.row]
+            return AddEditEmojiTableViewController(emoji: selectedEmoji, coder: coder)
+        }
+        return AddEditEmojiTableViewController(emoji: nil, coder: coder)
+    }
+    
+    
+    
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -28,7 +41,7 @@ class EmojiTableViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! EmojiCustomCellView
+        let cell = tableView.dequeueReusableCell(withIdentifier: "EmojiCell", for: indexPath) as! EmojiTableViewCell
         let emoji = emojiGroups[indexPath.section].emojis[indexPath.row]
 //        var content = cell.defaultContentConfiguration()
 //        content.text = "\(emoji.symbol) - \(emoji.name)"
@@ -64,10 +77,10 @@ class EmojiTableViewController: UITableViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let emoji = emojis[indexPath.row]
-        print("\(emoji.symbol) - \(indexPath)")
-    }
+//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        let emoji = emojis[indexPath.row]
+//        print("\(emoji.symbol) - \(indexPath)")
+//    }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return emojiGroups[section].name
