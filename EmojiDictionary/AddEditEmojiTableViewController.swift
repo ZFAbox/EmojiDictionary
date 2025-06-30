@@ -10,9 +10,23 @@ import UIKit
 class AddEditEmojiTableViewController: UITableViewController {
 
     var emoji: EmojiModel?
+    var category: String?
     
-    init?(emoji: EmojiModel?, coder: NSCoder) {
+    @IBOutlet weak var symbolTextField: UITextField!
+    
+    @IBOutlet weak var nameTextField: UITextField!
+    
+    @IBOutlet weak var descriptionTextField: UITextField!
+    
+    @IBOutlet weak var usageTextField: UITextField!
+    
+    @IBOutlet weak var categoryTextField: UITextField!
+    
+    @IBOutlet weak var saveButton: UIBarButtonItem!
+    
+    init?(emoji: EmojiModel?, category: String?, coder: NSCoder) {
         self.emoji = emoji
+        self.category = category
         super.init(coder: coder)
     }
     
@@ -22,25 +36,64 @@ class AddEditEmojiTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        if let emoji = emoji {
+            symbolTextField.text = emoji.symbol
+            nameTextField.text = emoji.name
+            descriptionTextField.text = emoji.description
+            usageTextField.text = emoji.usage
+            categoryTextField.text = category
+            title = "Edit Emoji"
+        } else {
+            title = "Add Emoji"
+        }
+        
+        updateSaveButtonState()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard segue.identifier == "saveUnwind" else { return }
+        let symbol = symbolTextField.text!
+        let name = nameTextField.text ?? ""
+        let description = descriptionTextField.text ?? ""
+        let usage = usageTextField.text ?? ""
+        let category = categoryTextField.text ?? ""
+        emoji = EmojiModel(symbol: symbol, name: name, description: description, usage: usage)
+        self.category = category
+    }
+    
+    private func updateSaveButtonState() {
+//        let symbolText = symbolTextField.text ?? ""
+        let sybolTextIsEmoji = containsSingleEmoji(symbolTextField)
+        let nameText = nameTextField.text ?? ""
+        let descriptionText = descriptionTextField.text ?? ""
+        let usageText = usageTextField.text ?? ""
+        saveButton.isEnabled = sybolTextIsEmoji && !nameText.isEmpty && !descriptionText.isEmpty && !usageText.isEmpty
+    }
+    
+    @IBAction func textEditingChanged( _ sender: UITextField){
+        updateSaveButtonState()
     }
 
+    func containsSingleEmoji(_ textField: UITextField) -> Bool {
+        guard let text = textField.text, text.count == 1 else {
+            return false
+        }
+        let isCombinedIntoEmoji = text.unicodeScalars.count > 1 && text.unicodeScalars.first?.properties.isEmoji ?? false
+        let isEmojiPresentation = text.unicodeScalars.first?.properties.isEmojiPresentation ?? false
+        return isCombinedIntoEmoji || isEmojiPresentation
+    }
     // MARK: - Table view data source
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
-    }
+//    override func numberOfSections(in tableView: UITableView) -> Int {
+//        // #warning Incomplete implementation, return the number of sections
+//        return 0
+//    }
+//
+//    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        // #warning Incomplete implementation, return the number of rows
+//        return 0
+//    }
 
     /*
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

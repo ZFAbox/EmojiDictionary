@@ -2,30 +2,43 @@ import UIKit
 
 class EmojiTableViewController: UITableViewController {
     
-    var emojis: [EmojiModel] = EmojiList.emojies
+//    var emojis: [EmojiModel] = EmojiList.emojies
     
     var emojiGroups: [EmojiGroupModel] = EmojiList.emijiGroupList
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = editButtonItem
-//        tableView.register(EmojiCustomCellView.self, forCellReuseIdentifier: "cell")
-//        let insets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-//        tableView.contentInset = insets
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 100
+        //        tableView.register(EmojiCustomCellView.self, forCellReuseIdentifier: "cell")
+        //        let insets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        //        tableView.contentInset = insets
     }
-
     
     @IBSegueAction func addEditEmoji(_ coder: NSCoder, sender: Any?) -> UITableViewController? {
         if let cell = sender as? UITableViewCell,
            let indexPath = tableView.indexPath(for: cell) {
             print("touch cell")
             let selectedEmoji = emojiGroups[indexPath.section].emojis[indexPath.row]
-            return AddEditEmojiTableViewController(emoji: selectedEmoji, coder: coder)
+            let selectedCategory = emojiGroups[indexPath.section].name
+            return AddEditEmojiTableViewController(emoji: selectedEmoji,category: selectedCategory, coder: coder)
         }
-        return AddEditEmojiTableViewController(emoji: nil, coder: coder)
+        return AddEditEmojiTableViewController(emoji: nil, category: nil, coder: coder)
     }
     
-    
+    @IBAction func unwindToEmojiTableViewController(segue: UIStoryboardSegue) {
+        guard segue.identifier == "saveUnwind", let sourceViewController = segue.source as? AddEditEmojiTableViewController, let emoji = sourceViewController.emoji  else { return }
+        
+        if let selectedIndexPath = tableView.indexPathForSelectedRow {
+            emojiGroups[selectedIndexPath.section].emojis[selectedIndexPath.row] = emoji
+            tableView.reloadRows(at: [selectedIndexPath], with: .none)
+        } else {
+            let newIndexPath = IndexPath(row: emojiGroups[0].emojis.count, section: 0)
+            emojiGroups[0].emojis.append(emoji)
+            tableView.insertRows(at: [newIndexPath], with: .automatic)
+        }
+    }
     
     // MARK: - Table view data source
 
@@ -53,8 +66,8 @@ class EmojiTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let movedEmoji = emojis.remove(at: sourceIndexPath.row)
-        emojis.insert(movedEmoji, at: destinationIndexPath.row)
+        let movedEmoji = emojiGroups[sourceIndexPath.section].emojis.remove(at: sourceIndexPath.row)
+        emojiGroups[destinationIndexPath.section].emojis.insert(movedEmoji, at: destinationIndexPath.row)
     }
     
     //Шаг 1. Разрешение редактировать строку, можно поставить запрет н а редактирование определенной строки. Если нужно редактировать все строки метод можно опустить.
@@ -70,7 +83,7 @@ class EmojiTableViewController: UITableViewController {
     //Шаг3. Удаление строки таблицы
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            self.emojis.remove(at: indexPath.row)
+            self.emojiGroups[indexPath.section].emojis.remove(at: indexPath.row)
             self.tableView.deleteRows(at: [indexPath], with: .automatic )
         } else if editingStyle == .insert {
     
