@@ -4,17 +4,24 @@ class EmojiTableViewController: UITableViewController {
     
 //    var emojis: [EmojiModel] = EmojiList.emojies
     
-    var emojiGroups: [EmojiGroupModel] = EmojiList.emijiGroupList
+    var emojiGroups: [EmojiGroupModel] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = editButtonItem
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 100
+        let loadedEmojiGroups = EmojiGroupModel.loadFromFile()
+        emojiGroups = loadedEmojiGroups.isEmpty
+        ? EmojiGroupModel.sampleEmojis()
+        : loadedEmojiGroups
+        
         //        tableView.register(EmojiCustomCellView.self, forCellReuseIdentifier: "cell")
         //        let insets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         //        tableView.contentInset = insets
     }
+    
+    
     
     @IBSegueAction func addEditEmoji(_ coder: NSCoder, sender: Any?) -> UITableViewController? {
         if let cell = sender as? UITableViewCell,
