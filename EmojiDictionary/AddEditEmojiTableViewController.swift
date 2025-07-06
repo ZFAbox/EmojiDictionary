@@ -68,7 +68,8 @@ class AddEditEmojiTableViewController: UITableViewController {
         let nameText = nameTextField.text ?? ""
         let descriptionText = descriptionTextField.text ?? ""
         let usageText = usageTextField.text ?? ""
-        saveButton.isEnabled = sybolTextIsEmoji && !nameText.isEmpty && !descriptionText.isEmpty && !usageText.isEmpty
+        let categoryText = categoryTextField.text ?? ""
+        saveButton.isEnabled = sybolTextIsEmoji && !nameText.isEmpty && !descriptionText.isEmpty && !usageText.isEmpty && !categoryText.isEmpty
     }
     
     @IBAction func textEditingChanged( _ sender: UITextField){

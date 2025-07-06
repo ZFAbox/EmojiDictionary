@@ -4,24 +4,21 @@ class EmojiTableViewController: UITableViewController {
     
 //    var emojis: [EmojiModel] = EmojiList.emojies
     
-    var emojiGroups: [EmojiGroupModel] = []
+    var emojiGroups: [EmojiGroupModel] = [] {
+        didSet {
+            EmojiGroupModel.saveToFile(emojiGroups: emojiGroups)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = editButtonItem
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 100
         let loadedEmojiGroups = EmojiGroupModel.loadFromFile()
         emojiGroups = loadedEmojiGroups.isEmpty
         ? EmojiGroupModel.sampleEmojis()
         : loadedEmojiGroups
-        
-        //        tableView.register(EmojiCustomCellView.self, forCellReuseIdentifier: "cell")
-        //        let insets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        //        tableView.contentInset = insets
     }
-    
-    
     
     @IBSegueAction func addEditEmoji(_ coder: NSCoder, sender: Any?) -> UITableViewController? {
         if let cell = sender as? UITableViewCell,
@@ -35,15 +32,27 @@ class EmojiTableViewController: UITableViewController {
     }
     
     @IBAction func unwindToEmojiTableViewController(segue: UIStoryboardSegue) {
-        guard segue.identifier == "saveUnwind", let sourceViewController = segue.source as? AddEditEmojiTableViewController, let emoji = sourceViewController.emoji  else { return }
+        guard segue.identifier == "saveUnwind", let sourceViewController = segue.source as? AddEditEmojiTableViewController, let emoji = sourceViewController.emoji, let category = sourceViewController.category  else { return }
         
-        if let selectedIndexPath = tableView.indexPathForSelectedRow {
+        if let selectedIndexPath = tableView.indexPathForSelectedRow, emojiGroups[selectedIndexPath.section].name == category  {
             emojiGroups[selectedIndexPath.section].emojis[selectedIndexPath.row] = emoji
             tableView.reloadRows(at: [selectedIndexPath], with: .none)
         } else {
-            let newIndexPath = IndexPath(row: emojiGroups[0].emojis.count, section: 0)
-            emojiGroups[0].emojis.append(emoji)
-            tableView.insertRows(at: [newIndexPath], with: .automatic)
+            if let oldIndexEmoji = tableView.indexPathForSelectedRow {
+                emojiGroups[oldIndexEmoji.section].emojis.removeAll { oldEmoji in
+                    oldEmoji == emoji
+                }
+                if emojiGroups[oldIndexEmoji.section].emojis.isEmpty {
+                    emojiGroups.remove(at: oldIndexEmoji.section)
+                }
+            }
+                if let newIndex = emojiGroups.firstIndex(where: { $0.name == category }) {
+                emojiGroups[newIndex].emojis.append(emoji)
+                } else {
+                    let newEmojiGroup = EmojiGroupModel(name: category, emojis: [emoji])
+                    emojiGroups.append(newEmojiGroup)
+                }
+            tableView.reloadData()
         }
     }
     
