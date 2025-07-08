@@ -65,7 +65,7 @@
                                     <outlet property="emojiDescription" destination="W2B-bx-HxQ" id="dQi-Nx-t83"/>
                                     <outlet property="emojiView" destination="7n1-ls-9TY" id="zNE-ZD-A4x"/>
                                     <outlet property="emoojiNamw" destination="4Kq-PJ-nLH" id="iQQ-sN-8qx"/>
-                                    <segue destination="OJe-Ai-UuJ" kind="presentation" id="14q-m1-WyK"/>
+                                    <segue destination="OJe-Ai-UuJ" kind="presentation" identifier="editEmoji" id="14q-m1-WyK"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

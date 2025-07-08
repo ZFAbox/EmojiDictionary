@@ -12,6 +12,7 @@ class EmojiTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.register(EmojiCustomCellView.self, forCellReuseIdentifier: "EmojiCustomCellView")
         navigationItem.leftBarButtonItem = editButtonItem
         tableView.rowHeight = UITableView.automaticDimension
         let loadedEmojiGroups = EmojiGroupModel.loadFromFile()
@@ -31,12 +32,25 @@ class EmojiTableViewController: UITableViewController {
         return AddEditEmojiTableViewController(emoji: nil, category: nil, coder: coder)
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let cell = sender as? EmojiCustomCellView, let indexPath = tableView.indexPath(for: cell) else { return }
+            let selectedEmoji = emojiGroups[indexPath.section].emojis[indexPath.row]
+            let selectedCategory = emojiGroups[indexPath.section].name
+        if segue.identifier == "editEmoji" {
+            guard let destinationViewController = segue.destination as? AddEditEmojiTableViewController else { return }
+            destinationViewController.title = "Edit Emoji"
+            destinationViewController.category = selectedCategory
+            destinationViewController.emoji = selectedEmoji
+        }
+    }
+    
     @IBAction func unwindToEmojiTableViewController(segue: UIStoryboardSegue) {
         guard segue.identifier == "saveUnwind", let sourceViewController = segue.source as? AddEditEmojiTableViewController, let emoji = sourceViewController.emoji, let category = sourceViewController.category  else { return }
         
         if let selectedIndexPath = tableView.indexPathForSelectedRow, emojiGroups[selectedIndexPath.section].name == category  {
             emojiGroups[selectedIndexPath.section].emojis[selectedIndexPath.row] = emoji
             tableView.reloadRows(at: [selectedIndexPath], with: .none)
+            tableView.deselectRow(at: selectedIndexPath, animated: false)
         } else {
             if let oldIndexEmoji = tableView.indexPathForSelectedRow {
                 emojiGroups[oldIndexEmoji.section].emojis.removeAll { oldEmoji in
@@ -70,12 +84,9 @@ class EmojiTableViewController: UITableViewController {
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "EmojiCell", for: indexPath) as! EmojiTableViewCell
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "EmojiCell", for: indexPath) as! EmojiTableViewCell // Метод используется для настройки ячейки в Storyboard
+        let cell = tableView.dequeueReusableCell(withIdentifier: "EmojiCustomCellView") as! EmojiCustomCellView
         let emoji = emojiGroups[indexPath.section].emojis[indexPath.row]
-//        var content = cell.defaultContentConfiguration()
-//        content.text = "\(emoji.symbol) - \(emoji.name)"
-//        content.secondaryText = emoji.description
-//        cell.contentConfiguration = content
         cell.update(with: emoji)
         cell.showsReorderControl = true
         return cell
@@ -106,10 +117,10 @@ class EmojiTableViewController: UITableViewController {
         }
     }
     
-//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let emoji = emojis[indexPath.row]
-//        print("\(emoji.symbol) - \(indexPath)")
-//    }
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath) as! EmojiCustomCellView
+        performSegue(withIdentifier: "editEmoji", sender: cell)
+    }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return emojiGroups[section].name

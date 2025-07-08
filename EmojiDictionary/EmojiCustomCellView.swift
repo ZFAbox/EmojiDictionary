@@ -43,6 +43,7 @@ class EmojiCustomCellView: UITableViewCell {
     
     private lazy var emojiDescription: UILabel = {
         let label = UILabel()
+        label.numberOfLines = 0
         label.text = "Smiling face with open mouth"
         label.font = .systemFont(ofSize: 17, weight: .medium)
         return label
@@ -73,10 +74,10 @@ class EmojiCustomCellView: UITableViewCell {
     
     private func setConstraints(){
         NSLayoutConstraint.activate([
-            hStack.topAnchor.constraint(equalTo: contentView.topAnchor),
+            hStack.topAnchor.constraint(equalTo: contentView.topAnchor,constant: 5),
             hStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             hStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            hStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+            hStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5)
         ])
     }
     
